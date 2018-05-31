@@ -1,9 +1,9 @@
 import random
 import sympy
-from ball_in_box.validate import validate
+from .validate import validate
 
 __all__ = ['ball_in_box']
-"""
+
 def get_max(blocks):
     from sympy.abc import x, y
 
@@ -14,25 +14,27 @@ def get_max(blocks):
     result = []
 
     def print_res():
+        '''
         print("area: \n", dx, dy)
         print("blocks: \n", blocks)
         print("max circle: \n", result)
+        '''
         return result
 
     def test(res):
-        covering = False
+        not_covering = True
         for b in blocks:
             if (b[0] - res[1][0]) ** 2 + (b[1] - res[1][1]) ** 2 < res[0] ** 2:
-                covering = True
-        return covering
+                not_covering = False
+        return not_covering
+
     '''
     def get_block():
         bx = random.uniform(dx[0], dx[1])
         by = random.uniform(dy[0], dy[1])
         return [bx, by]
-
     
-
+    
     # max: 3
     block_num = random.randint(1, 3)
     blocks.insert(0, get_block())
@@ -44,8 +46,8 @@ def get_max(blocks):
             if block == b:
                 continue
         blocks.insert(i, b)
-    
     '''
+
     pos, r = [], []
 
     def max_of_r():
@@ -132,7 +134,7 @@ def get_max(blocks):
         return print_res()
     # for more blocks
     # todo
-"""
+
 
 def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     """
@@ -143,52 +145,39 @@ def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
     """
 
     # The following is an example implementation.
-#    max_circle = get_max(blockers)
+    max_circle = get_max(blockers)
     circles = []
-    for circle_index in range(m):
-        #if  circle_index==0:
-         #   circles.append((max_circle[1][0], max_circle[1][1], max_circle[0]))
-          #  continue
-        x = random.random()*2 - 1
-        y = random.random()*2 - 1
-        r = random.random()+0.25
+    r_rate = 0.25
 
-        circles.append((x, y, r))
-        while not validate(circles, blockers):
+    def create_circles(rate):
+        for circle_index in range(m):
+            if  circle_index==0:
+                circles.append((max_circle[1][0], max_circle[1][1], max_circle[0]))
+                continue
+            if circle_index == m-1:
+                rate = 0.1
             x = random.random()*2 - 1
             y = random.random()*2 - 1
-            r = random.random()+0.25
-            circles[circle_index] = (x, y, r)
-
-
-        circle_index += 1
-    i=0.0
-    max=0.0
-    while i<10:
-        a=0.0
-        for circle in circles:
-            a+=circle[2]**2
-        if a>max:
-            max=a
-        circles = []
-        for circle_index in range(5):
-            # if  circle_index==0:
-            #   circles.append((max_circle[1][0], max_circle[1][1], max_circle[0]))
-            #  continue
-            x = random.random() * 2 - 1
-            y = random.random() * 2 - 1
-            r = random.random() + 0.25
-
+            r = random.random()*rate
             circles.append((x, y, r))
             while not validate(circles, blockers):
-                x = random.random() * 2 - 1
-                y = random.random() * 2 - 1
-                if circle_index==5:
-                    r = random.random()+0.1
-                else:
-                     r = random.random() +0.25
+                x = random.random()*2 - 1
+                y = random.random()*2 - 1
+                r = random.random()*rate
                 circles[circle_index] = (x, y, r)
+        return circles
 
-            circle_index += 1
-        i+=1
-    return circles
+    return create_circles(r_rate)
+    # todo
+    circles_group = []
+    max_sum, pos = 0, 0
+    for index in range(2):
+        tmp = 0
+        circles = create_circles(r_rate)
+        circles_group.append(circles)
+        for circle in circles:
+            tmp += circle[2]
+        if tmp > max_sum:
+            max_sum = tmp
+            pos = index
+    return circles_group[pos]
