@@ -33,6 +33,7 @@ def get_max(blocks):
         bx = random.uniform(dx[0], dx[1])
         by = random.uniform(dy[0], dy[1])
         return [bx, by]
+
     
     
     # max: 3
