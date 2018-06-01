@@ -1,24 +1,24 @@
 import random
 import sympy
 from .validate import validate
+from sympy.abc import x, y
 
 __all__ = ['ball_in_box']
 
-def get_max(blocks):
-    from sympy.abc import x, y
 
+def get_max(blocks):
     # area
     dx, dy = [-1.0, 1.0], [-1.0, 1.0]
-    #blocks = []
+    # blocks = []
     block_num = len(blocks)
     result = []
 
     def print_res():
-        '''
+        """
         print("area: \n", dx, dy)
         print("blocks: \n", blocks)
         print("max circle: \n", result)
-        '''
+        """
         return result
 
     def test(res):
@@ -28,7 +28,7 @@ def get_max(blocks):
                 not_covering = False
         return not_covering
 
-    '''
+    """
     def get_block():
         bx = random.uniform(dx[0], dx[1])
         by = random.uniform(dy[0], dy[1])
@@ -47,7 +47,7 @@ def get_max(blocks):
             if block == b:
                 continue
         blocks.insert(i, b)
-    '''
+    """
 
     pos, r = [], []
 
@@ -133,6 +133,18 @@ def get_max(blocks):
     result = max_of_r()
     if result is not None:
         return print_res()
+    # for 3 blocks
+    pos, r = [], []
+    i, j = 0, 0
+    b1, b2, b3 = blocks[0], blocks[1], blocks[2]
+    x1, y1, x2, y2, x3, y3 = b1[0], b1[1], b2[0], b2[1], b3[0], b3[1]
+    p = sympy.solve(
+        [(x - x1) ** 2 + (y - y1) ** 2 - (x - x2) ** 2 - (y - y2) ** 2,
+         (x - x1) ** 2 + (y - y1) ** 2 - (x - x3) ** 2 - (y - y3) ** 2],
+        [x, y])
+    r = [sympy.math.sqrt((x - x1) ** 2 + (y - y1) ** 2)]
+    if test([r, p]):
+        return print_res()
     # for more blocks
     # todo
 
@@ -152,7 +164,7 @@ def ball_in_box(m=5, blockers=[(0.5, 0.5), (0.5, -0.5), (0.5, 0.3)]):
 
     def create_circles(rate):
         for circle_index in range(m):
-            if  circle_index==0:
+            if circle_index == 0:
                 circles.append((max_circle[1][0], max_circle[1][1], max_circle[0]))
                 continue
             if circle_index == m-1:
